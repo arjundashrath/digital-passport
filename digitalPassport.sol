@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT
+
 pragma solidity 0.8.2;
 
 contract DigitalPassport {
@@ -8,6 +10,7 @@ contract DigitalPassport {
         uint productId;
         uint[] historyTimestamps;
         uint expiryDate;
+        address[] delegates;
     }
     
     mapping(uint256 => Passport) public passports;
@@ -22,12 +25,17 @@ contract DigitalPassport {
         addArray[0] = _ownershipHistory;
         passports[_tokenId].ownershipHistory = addArray;
         passports[_tokenId].historyTimestamps = timeArray;
-
+        passports[_tokenId].delegates = new address[](0);
     }
     
-    function retrieve(uint256 _tokenId) public view returns (uint256, address[] memory, uint, uint[] memory, uint) {
+    function retrieve(uint256 _tokenId) public view returns (uint256, address[] memory, uint, uint[] memory, uint, address[] memory) {
         Passport memory passport = passports[_tokenId];
-        return (passport.tokenId, passport.ownershipHistory, passport.productId, passport.historyTimestamps, passport.expiryDate);
+        return (passport.tokenId, passport.ownershipHistory, passport.productId, passport.historyTimestamps, passport.expiryDate, passport.delegates);
+    }
+
+    function addDelegates(address _delegate, uint256 _tokenId) public {
+        Passport storage passport = passports[_tokenId];
+        passport.delegates.push(_delegate);
     }
 
     function transferToken(uint256 _tokenId, address _newOwner) public {
