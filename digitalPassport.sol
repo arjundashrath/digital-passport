@@ -51,6 +51,13 @@ contract DigitalPassport {
         }
         addArray[i] = _newOwner;
         passports[_tokenId].ownershipHistory = addArray;
+        uint[] memory timeArray = new uint[](passports[_tokenId].historyTimestamps.length + 1);
+        uint j=0;
+        for(j=0; j<passports[_tokenId].historyTimestamps.length; j++){
+            timeArray[j]=passports[_tokenId].historyTimestamps[j];
+        }
+        timeArray[j]=block.timestamp;
+        passports[_tokenId].historyTimestamps = timeArray;
 
     }
 
