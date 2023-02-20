@@ -16,6 +16,8 @@ contract DigitalPassport {
     mapping(uint256 => Passport) public passports;
     
     function register(uint256 _tokenId, address _ownershipHistory, uint _productId, uint _expiryDate) public {
+        require(_productId != 0, "Error: Product ID cannot be zero!");
+        require(passports[_tokenId].productId == 0, "Error: Token already exists with the same Token ID!");
         passports[_tokenId].tokenId =  _tokenId;
         passports[_tokenId].productId = _productId;
         passports[_tokenId].expiryDate = _expiryDate;
@@ -29,16 +31,19 @@ contract DigitalPassport {
     }
     
     function retrieve(uint256 _tokenId) public view returns (uint256, address[] memory, uint, uint[] memory, uint, address[] memory) {
+        require(passports[_tokenId].productId != 0, "Error: No Token found!");
         Passport memory passport = passports[_tokenId];
         return (passport.tokenId, passport.ownershipHistory, passport.productId, passport.historyTimestamps, passport.expiryDate, passport.delegates);
     }
 
     function addDelegates(address _delegate, uint256 _tokenId) public {
+        require(passports[_tokenId].productId != 0, "Error: No Token found!");
         Passport storage passport = passports[_tokenId];
         passport.delegates.push(_delegate);
     }
 
     function transferToken(uint256 _tokenId, address _newOwner) public {
+        require(block.timestamp < passports[_tokenId].expiryDate, "Error: Token expired! Cannot be transferred");
         uint i = 0;
         address[] memory addArray = new address[](passports[_tokenId].ownershipHistory.length + 1);
         for(i = 0; i < passports[_tokenId].ownershipHistory.length; i++){
