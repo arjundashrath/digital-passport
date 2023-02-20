@@ -50,16 +50,22 @@ contract DigitalPassport {
 
     function clearOneDelegate(uint256 _tokenId, address _delegate) public {
         Passport storage passport = passports[_tokenId];
-        for (uint i = 0; i < passport.delegates.length; i++) 
-        {
-            if (passport.delegates[i] == _delegate){
-                delete passport.delegates[i];
-                passport.delegates[i] = passport.delegates[passport.delegates.length - 1];
-                passport.delegates.pop;
+
+        for (uint i = 0; i < passport.delegates.length; i++) {
+            if (passport.delegates[i] == _delegate) {
+                if (passport.delegates.length == 1) {
+                    passport.delegates.pop();
+                } else if (i == passport.delegates.length - 1) {
+                    passport.delegates.pop();
+                } else {
+                    passport.delegates[i] = passport.delegates[passport.delegates.length - 1];
+                    passport.delegates.pop();
+                }
                 break;
             }
         }
     }
+
 
     function clearAllDelegates(uint256 _tokenId) public {
         Passport storage passport = passports[_tokenId];
