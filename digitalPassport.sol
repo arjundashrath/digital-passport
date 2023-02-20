@@ -13,7 +13,7 @@ contract DigitalPassport {
         address[] delegates;
     }
     
-    mapping(uint256 => Passport) public passports;
+    mapping(uint256 => Passport) private passports;
     
     function register(uint256 _tokenId, address _ownershipHistory, uint _productId, uint _expiryDate) public {
         require(_productId != 0, "Error: Product ID cannot be zero!");
@@ -52,6 +52,11 @@ contract DigitalPassport {
         addArray[i] = _newOwner;
         passports[_tokenId].ownershipHistory = addArray;
 
+    }
+
+    function modifyExpiry(uint256 _tokenId, uint _newexpiry) public{
+        require(passports[_tokenId].productId != 0, "Error: No Token found!");
+        passports[_tokenId].expiryDate = _newexpiry;
     }
 
 }
